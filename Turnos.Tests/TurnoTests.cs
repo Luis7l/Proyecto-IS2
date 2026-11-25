@@ -53,4 +53,53 @@ public class TurnoTests
         // Assert
         Assert.NotEqual(Guid.Empty, turno.Id);
     }
+
+    [Fact]
+    public void CrearTurno_FechaFinSeCalculaCorrectamente()
+    {
+        // Arrange
+        var fecha = new DateTime(2026, 12, 1, 10, 0, 0);
+        var duracion = 45;
+
+        // Act
+        var turno = new Turno(fecha, "Juan Pérez", "Dr. García", duracion);
+
+        // Assert
+        Assert.Equal(fecha.AddMinutes(duracion), turno.FechaFin);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public void CrearTurno_PacienteInvalido_LanzaExcepcion(string? pacienteInvalido)
+    {
+        // Arrange & Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            new Turno(new DateTime(2026, 12, 1, 10, 0, 0), pacienteInvalido!, "Dr. García", 30)
+        );
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    [InlineData(null)]
+    public void CrearTurno_ProfesionalInvalido_LanzaExcepcion(string? profesionalInvalido)
+    {
+        // Arrange & Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            new Turno(new DateTime(2026, 12, 1, 10, 0, 0), "Juan Pérez", profesionalInvalido!, 30)
+        );
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-15)]
+    public void CrearTurno_DuracionInvalida_LanzaExcepcion(int duracionInvalida)
+    {
+        // Arrange & Act & Assert
+        Assert.Throws<ArgumentException>(() =>
+            new Turno(new DateTime(2026, 12, 1, 10, 0, 0), "Juan Pérez", "Dr. García", duracionInvalida)
+        );
+    }
 }
